@@ -1,0 +1,597 @@
+/* ===== Full-screen course shell (no Mac frame) ===== */
+
+body:has(.course-app) {
+  padding: 0 !important;
+  background: #fff !important;
+}
+
+.course-app {
+  min-height: 100dvh;
+  background: #fff;
+  color: #1d1d1b;
+}
+
+.course-app .course-shell {
+  min-height: 100dvh;
+  padding: 0;
+  border-radius: 0;
+  background: #fff;
+  animation: none;
+  overflow: visible;
+}
+
+.course-app .course-shell::before {
+  display: none;
+}
+
+.course-app .traffic {
+  display: none !important;
+}
+
+/* ===== Sticky header ===== */
+
+.course-app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 14px clamp(16px, 4vw, 48px);
+  border-bottom: 1px solid rgb(29 29 27 / 10%);
+  background: rgb(255 255 255 / 96%);
+  backdrop-filter: blur(10px);
+}
+
+.course-app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.course-app-header__company-logo {
+  height: 32px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+}
+
+.course-app-header__company-name {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.course-app .course-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: clamp(22px, 4vw, 42px);
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 48px) clamp(48px, 6vw, 80px);
+}
+
+.course-app .course-nav {
+  margin: 0;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.course-app .course-nav--top {
+  margin-bottom: 0;
+}
+
+.course-app .course-top {
+  gap: 16px;
+}
+
+.course-app .course-title {
+  font-size: clamp(36px, 7vw, 88px);
+}
+
+.course-app .lesson-grid {
+  align-items: start;
+}
+
+.course-app .lesson-card,
+.course-app .explain-card,
+.course-app .code-playground {
+  min-height: 0;
+}
+
+.course-app .lesson-sections {
+  display: contents;
+}
+
+.course-app .course-footer {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgb(29 29 27 / 10%);
+}
+
+.course-app .course-footer--lesson {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin-top: 24px;
+  padding: 16px 0 8px;
+  background: linear-gradient(transparent, #fff 30%);
+}
+
+/* ===== GARPIUM logo ===== */
+
+.garpium-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.garpium-logo__img {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+.garpium-logo--compact .garpium-logo__img {
+  height: 22px;
+}
+
+.garpium-logo__text {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(29 29 27 / 55%);
+}
+
+.powered-by-garpium {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid rgb(29 29 27 / 12%);
+  font-size: 12px;
+  color: rgb(29 29 27 / 55%);
+}
+
+/* ===== Roadmap path ===== */
+
+.roadmap-path {
+  position: relative;
+  display: grid;
+  gap: 40px;
+  padding: 8px 0 16px;
+}
+
+.roadmap-path__spine {
+  position: absolute;
+  top: 24px;
+  bottom: 48px;
+  left: 50%;
+  width: 4px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--brand) 0%, rgb(29 29 27 / 12%) 100%);
+  pointer-events: none;
+}
+
+.roadmap-path__module {
+  position: relative;
+  display: grid;
+  gap: 20px;
+}
+
+.roadmap-path__milestone {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.roadmap-path__milestone-dot {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--brand);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--brand);
+  font-size: 14px;
+  font-weight: 900;
+  box-shadow: 0 8px 24px rgb(var(--brand-rgb) / 18%);
+}
+
+.roadmap-path__milestone-title {
+  margin: 0;
+  padding: 8px 18px;
+  border: 2px solid rgb(29 29 27 / 12%);
+  border-radius: 999px;
+  background: #fff;
+  color: rgb(29 29 27 / 55%);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.roadmap-path__nodes {
+  display: grid;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roadmap-path__node {
+  position: relative;
+  width: min(100%, 420px);
+}
+
+.roadmap-path__node--left {
+  justify-self: start;
+  margin-right: auto;
+  padding-right: calc(50% + 28px);
+}
+
+.roadmap-path__node--right {
+  justify-self: end;
+  margin-left: auto;
+  padding-left: calc(50% + 28px);
+}
+
+.roadmap-path__node::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  width: 28px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.roadmap-path__node--left::before {
+  right: calc(50% - 14px);
+}
+
+.roadmap-path__node--right::before {
+  left: calc(50% - 14px);
+}
+
+.roadmap-path__link {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 16px;
+  border: 2px solid #1d1d1b;
+  border-radius: 20px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 6%);
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.roadmap-path__link:hover {
+  transform: translateY(-3px);
+  border-color: var(--brand);
+  box-shadow: 0 18px 36px rgb(var(--brand-rgb) / 14%);
+}
+
+.roadmap-path__number {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 2px solid var(--brand);
+  border-radius: 14px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.roadmap-path__card {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.roadmap-path__card strong {
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.roadmap-path__card p {
+  margin: 0;
+  color: rgb(29 29 27 / 68%);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.roadmap-path__node.is-done .roadmap-path__link {
+  border-color: #28c840;
+  background: linear-gradient(135deg, #f7fff9, #fff);
+}
+
+.roadmap-path__node.is-done .roadmap-path__number {
+  border-color: #28c840;
+  background: #f0fff4;
+  color: #28c840;
+}
+
+.roadmap-path__finish {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.roadmap-path__finish-dot {
+  width: 18px;
+  height: 18px;
+  border: 3px solid var(--brand);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.roadmap-path__finish p {
+  margin: 0;
+  color: rgb(29 29 27 / 55%);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ===== Forms & admin ===== */
+
+.course-app .profile-form,
+.course-app .auth-form,
+.course-app .support-form {
+  display: grid;
+  gap: 12px;
+}
+
+.course-app .profile-form label,
+.course-app .auth-form label,
+.course-app .support-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.course-app .profile-form input,
+.course-app .auth-form input,
+.course-app .support-form input,
+.course-app .support-form textarea {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 2px solid rgb(29 29 27 / 12%);
+  border-radius: 12px;
+  font: inherit;
+}
+
+.course-app .support-form textarea {
+  min-height: 160px;
+  padding: 14px;
+  resize: vertical;
+}
+
+.course-app .form-message {
+  padding: 12px;
+  border-radius: 12px;
+  background: #f7fff9;
+  font-weight: 700;
+}
+
+.course-app .form-message.is-error {
+  background: #fff7f7;
+}
+
+.course-app .content-table {
+  display: grid;
+  gap: 0;
+  margin-top: 20px;
+}
+
+.course-app .content-row {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgb(29 29 27 / 12%);
+}
+
+.course-app .content-row a {
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.course-app .lesson-edit-form {
+  display: grid;
+  gap: 16px;
+}
+
+.course-app .lesson-edit-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.course-app .lesson-edit-form input,
+.course-app .lesson-edit-form textarea {
+  padding: 12px 14px;
+  border: 2px solid #1d1d1b;
+  border-radius: 12px;
+  font: inherit;
+}
+
+.course-app .lesson-edit-form textarea {
+  min-height: 120px;
+  font-family: Consolas, monospace;
+  resize: vertical;
+}
+
+.course-app .admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .course-app-header {
+    padding: 12px 14px;
+  }
+
+  .course-app .course-nav {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .course-app .course-content {
+    padding: 20px 14px 64px;
+  }
+
+  .course-app .content-row {
+    grid-template-columns: 1fr;
+  }
+
+  .roadmap-path__spine {
+    left: 22px;
+    transform: none;
+  }
+
+  .roadmap-path__milestone {
+    justify-content: flex-start;
+    padding-left: 8px;
+  }
+
+  .roadmap-path__node--left,
+  .roadmap-path__node--right {
+    width: 100%;
+    padding-left: 52px;
+    padding-right: 0;
+    margin: 0;
+  }
+
+  .roadmap-path__node::before {
+    left: 22px !important;
+    right: auto !important;
+    width: 20px;
+  }
+}
+
+.integration-doc {
+  display: grid;
+  gap: 16px;
+}
+
+.integration-doc h2 {
+  margin: 12px 0 0;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 900;
+}
+
+.integration-doc code {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgb(29 29 27 / 6%);
+  font-size: 13px;
+}
+
+.integration-endpoints {
+  display: grid;
+  gap: 10px;
+}
+
+.integration-endpoint {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 2px solid rgb(29 29 27 / 12%);
+  border-radius: 14px;
+  background: var(--brand-soft);
+}
+
+.integration-endpoint code {
+  background: transparent;
+  padding: 0;
+  font-weight: 800;
+  color: var(--brand);
+}
+
+.integration-endpoint span {
+  font-size: 13px;
+  color: rgb(29 29 27 / 65%);
+  font-weight: 600;
+}
+
+@media (max-width: 560px) {
+  .course-app .course-title {
+    font-size: clamp(28px, 8vw, 44px);
+  }
+
+  .roadmap-path__link {
+    grid-template-columns: 1fr;
+  }
+
+  .roadmap-path__number {
+    width: fit-content;
+  }
+}
+
+.company-code {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+
+.company-code__value {
+  padding: 10px 16px;
+  border: 2px solid var(--border, rgb(29 29 27 / 14%));
+  border-radius: 999px;
+  background: #fff;
+  font-family: ui-monospace, "Cascadia Code", monospace;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.company-steps {
+  margin: 0;
+  padding-left: 1.2em;
+  line-height: 1.55;
+}
+
+.company-steps li + li {
+  margin-top: 8px;
+}

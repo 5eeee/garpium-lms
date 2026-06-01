@@ -1,0 +1,391 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  GARPIUM_EMPLOYEE
+  COMPANY_OWNER
+  COMPANY_ADMIN
+  COMPANY_MANAGER
+  COMPANY_EMPLOYEE
+  PUBLIC_USER
+  SUPPORT
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum OrganizationVerificationStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  REJECTED
+}
+
+enum MembershipStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  SUSPENDED
+}
+
+enum OrganizationRole {
+  COMPANY_OWNER
+  COMPANY_ADMIN
+  COMPANY_MANAGER
+  COMPANY_EMPLOYEE
+}
+
+enum InvitationType {
+  SINGLE_USE
+  MULTI_USE
+}
+
+enum DepartmentType {
+  DEPARTMENT
+  DIVISION
+  GROUP
+  TEAM
+  BRANCH
+}
+
+enum AssignmentScope {
+  COMPANY
+  DEPARTMENT
+  USER
+}
+
+enum LessonType {
+  HTML
+  CSS
+  GAME
+  PROJECT
+}
+
+enum ProgressStatus {
+  LOCKED
+  OPEN
+  IN_PROGRESS
+  DONE
+}
+
+enum AttemptTier {
+  FAIL
+  WRONG
+  SYNTAX
+  ACCEPTABLE
+  PRIMARY
+}
+
+enum CertificateStatus {
+  DRAFT
+  ISSUED
+  REVOKED
+}
+
+model Company {
+  id                 String                         @id @default(cuid())
+  name               String
+  slug               String                         @unique
+  subdomain          String?                        @unique
+  logoUrl            String?
+  brandHtml          String                         @default("#e8622a")
+  brandCss           String                         @default("#0080ff")
+  website            String?
+  showPoweredBy      Boolean                        @default(true)
+  verificationStatus OrganizationVerificationStatus @default(PENDING_VERIFICATION)
+  inn                String?
+  legalName          String?
+  legalAddress       String?
+  corporateEmail     String?
+  additionalInfo     String?
+  isGarpium          Boolean                        @default(false)
+  ownerId            String?
+  owner              User?                          @relation("CompanyOwner", fields: [ownerId], references: [id])
+  ssoEnabled         Boolean                        @default(false)
+  ssoLabel           String?
+  ssoIssuer          String?
+  ssoClientId        String?
+  ssoClientSecret    String?
+  ssoAutoApprove     Boolean                        @default(false)
+  ssoEmailDomains    String[]                       @default([])
+  createdAt          DateTime                       @default(now())
+  users              User[]                         @relation("UserCompany")
+  members            OrganizationMember[]
+  invitations        Invitation[]
+  joinRequests       JoinRequest[]
+  departments        Department[]
+  domains            OrganizationDomain[]
+  apiKeys            ApiKey[]
+  auditLogs          AuditLog[]
+  courseAssignments  CourseAssignment[]
+}
+
+model OrganizationMember {
+  id           String           @id @default(cuid())
+  userId       String
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId    String
+  company      Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  orgRole      OrganizationRole @default(COMPANY_EMPLOYEE)
+  departmentId String?
+  department   Department?      @relation(fields: [departmentId], references: [id])
+  jobTitle     String?
+  status       MembershipStatus @default(PENDING)
+  joinedAt     DateTime         @default(now())
+
+  @@unique([userId, companyId])
+}
+
+model Invitation {
+  id           String           @id @default(cuid())
+  companyId    String
+  company      Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdById  String
+  createdBy    User             @relation("InvitationCreator", fields: [createdById], references: [id])
+  code         String           @unique
+  displayCode  String
+  type         InvitationType   @default(SINGLE_USE)
+  expiresAt    DateTime?
+  maxUses      Int?
+  useCount     Int              @default(0)
+  departmentId String?
+  department   Department?      @relation(fields: [departmentId], references: [id])
+  jobTitle     String?
+  assignRole   OrganizationRole @default(COMPANY_EMPLOYEE)
+  active       Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  joinRequests JoinRequest[]
+}
+
+model JoinRequest {
+  id           String         @id @default(cuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId    String
+  company      Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invitationId String?
+  invitation   Invitation?    @relation(fields: [invitationId], references: [id])
+  departmentId String?
+  department   Department?    @relation(fields: [departmentId], references: [id])
+  jobTitle     String?
+  status       ApprovalStatus @default(PENDING)
+  reviewedById String?
+  reviewedBy   User?          @relation("JoinRequestReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  createdAt    DateTime       @default(now())
+}
+
+model Department {
+  id           String         @id @default(cuid())
+  companyId    String
+  company      Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name         String
+  type         DepartmentType @default(DEPARTMENT)
+  parentId     String?
+  parent       Department?    @relation("DepartmentTree", fields: [parentId], references: [id])
+  children     Department[]   @relation("DepartmentTree")
+  members      OrganizationMember[]
+  invitations  Invitation[]
+  joinRequests JoinRequest[]
+  courseAssignments CourseAssignment[]
+  createdAt    DateTime       @default(now())
+}
+
+model OrganizationDomain {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  domain    String   @unique
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  companyId   String?
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  action      String
+  description String
+  ip          String?
+  createdAt   DateTime @default(now())
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  companyId  String
+  company    Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name       String
+  prefix     String
+  keyHash    String
+  secretHash String?
+  scopes     String[]  @default(["read:courses", "read:lessons", "read:progress"])
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  firstName           String
+  lastName            String
+  email               String               @unique
+  passwordHash        String?
+  role                Role                 @default(PUBLIC_USER)
+  approvalStatus      ApprovalStatus       @default(PENDING)
+  companyId           String?
+  company             Company?             @relation("UserCompany", fields: [companyId], references: [id])
+  createdAt           DateTime             @default(now())
+  approvedAt          DateTime?
+  approvedById        String?
+  points              Int                  @default(0)
+  progress            Progress[]
+  attempts            CodeAttempt[]
+  certificates        Certificate[]
+  supportThreads      SupportThread[]      @relation("ThreadOwner")
+  supportMessages     SupportMessage[]
+  ownedCompanies      Company[]            @relation("CompanyOwner")
+  memberships         OrganizationMember[]
+  createdInvitations  Invitation[]         @relation("InvitationCreator")
+  joinRequests        JoinRequest[]
+  reviewedJoinRequests JoinRequest[]       @relation("JoinRequestReviewer")
+  auditLogs           AuditLog[]
+  courseAssignments   CourseAssignment[]    @relation("AssignmentTarget")
+  assignedCourses     CourseAssignment[]    @relation("AssignmentCreator")
+}
+
+model Course {
+  id          String             @id @default(cuid())
+  slug        String             @unique
+  title       String
+  description String
+  accentColor String
+  order       Int
+  modules     Module[]
+  assignments CourseAssignment[]
+  createdAt   DateTime           @default(now())
+}
+
+model CourseAssignment {
+  id           String          @id @default(cuid())
+  companyId    String
+  company      Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  courseId     String
+  course       Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  scope        AssignmentScope
+  departmentId String?
+  department   Department?     @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  userId       String?
+  user         User?           @relation("AssignmentTarget", fields: [userId], references: [id], onDelete: Cascade)
+  assignedById String
+  assignedBy   User            @relation("AssignmentCreator", fields: [assignedById], references: [id])
+  createdAt    DateTime        @default(now())
+
+  @@index([companyId, courseId])
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  order       Int
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id          String     @id
+  moduleId    String
+  module      Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  type        LessonType
+  title       String
+  simple      String
+  content     Json
+  visual      Json?
+  order       Int
+  points      Int        @default(10)
+  tasks       Task[]
+  progress    Progress[]
+}
+
+model Task {
+  id          String        @id @default(cuid())
+  lessonId    String
+  lesson      Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  type        LessonType
+  label       String
+  starter     String
+  preview     String
+  maxLength   Int           @default(500)
+  primary     String[]
+  acceptable  String[]
+  wrongHints  Json
+  attempts    CodeAttempt[]
+}
+
+model Progress {
+  id        String         @id @default(cuid())
+  userId    String
+  lessonId  String
+  status    ProgressStatus @default(OPEN)
+  points    Int            @default(0)
+  doneAt    DateTime?
+  updatedAt DateTime       @updatedAt
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson    Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model CodeAttempt {
+  id          String      @id @default(cuid())
+  userId      String
+  taskId      String
+  code        String
+  tier        AttemptTier
+  ok          Boolean
+  diagnostics Json
+  createdAt   DateTime    @default(now())
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task        Task        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Certificate {
+  id        String            @id @default(cuid())
+  userId    String
+  number    String            @unique
+  status    CertificateStatus @default(DRAFT)
+  issuedAt  DateTime?
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SupportThread {
+  id        String           @id @default(cuid())
+  userId    String
+  subject   String
+  status    String           @default("open")
+  createdAt DateTime         @default(now())
+  user      User             @relation("ThreadOwner", fields: [userId], references: [id], onDelete: Cascade)
+  messages  SupportMessage[]
+}
+
+model SupportMessage {
+  id        String        @id @default(cuid())
+  threadId  String
+  userId    String
+  body      String
+  createdAt DateTime      @default(now())
+  thread    SupportThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

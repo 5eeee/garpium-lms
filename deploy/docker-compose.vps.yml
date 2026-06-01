@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: garpium-lms-postgres
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      POSTGRES_USER: lms
+      POSTGRES_DB: corporate_lms
+    volumes:
+      - garpium_lms_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lms -d corporate_lms"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: garpium-lms-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.production
+    volumes:
+      - ../deploy/certs:/opt/garpium-lms/deploy/certs:ro
+    ports:
+      - "127.0.0.1:3001:3000"
+    entrypoint: ["node", "server.js"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:3000/login || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+  seed:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      target: builder
+    profiles: ["seed"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.production
+    entrypoint: ["npx", "tsx", "prisma/seed.ts"]
+
+volumes:
+  garpium_lms_pg_data:

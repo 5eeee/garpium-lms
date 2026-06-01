@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+data
+*.tgz
+*.log
+.cursor
+docs
+scripts
+deploy/*
+!deploy/docker-entrypoint.sh
+tsconfig.tsbuildinfo
+docker-compose.prod.yml
