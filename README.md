@@ -1,6 +1,8 @@
 # GARPIUM LMS — Corporate Learning OS
 
-Multi-tenant SaaS-платформа корпоративного обучения: курсы, wiki, онбординг, сертификаты, marketplace, RBAC.
+> **Полная техническая документация:** [docs/TECHNICAL.md](docs/TECHNICAL.md) · **GitHub:** [github.com/5eeee/garpium-lms](https://github.com/5eeee/garpium-lms)
+
+Multi-tenant SaaS-платформа корпоративного обучения
 
 ## Стек
 
