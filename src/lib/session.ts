@@ -60,6 +60,16 @@ export async function getCurrentUser() {
   });
 }
 
+export async function getCompanyForPanel() {
+  const session = await requireCompanyPanel();
+  const user = await db.user.findUnique({
+    where: { email: session.user.email! },
+    include: { company: true }
+  });
+  if (!user?.company) return null;
+  return user.company;
+}
+
 export async function getCompanyForAdmin() {
   const session = await requireCompanyAdmin();
   const user = await db.user.findUnique({

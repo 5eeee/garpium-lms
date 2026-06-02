@@ -1,0 +1,40 @@
+# Быстрый деплой: образ из папки release/ (без npm ci / next build на сервере).
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: garpium-lms-postgres
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      POSTGRES_USER: lms
+      POSTGRES_DB: corporate_lms
+    volumes:
+      - garpium_lms_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lms -d corporate_lms"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.runtime
+    image: garpium-lms-app:fast
+    container_name: garpium-lms-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.production
+    volumes:
+      - ./certs:/opt/garpium-lms/deploy/certs:ro
+      - garpium_lms_uploads:/app/public/uploads
+    ports:
+      - "127.0.0.1:3001:3000"
+
+volumes:
+  garpium_lms_pg_data:
+  garpium_lms_uploads:

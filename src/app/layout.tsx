@@ -3,8 +3,8 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
-  title: "GARPIUM LMS - HTML & CSS",
-  description: "Корпоративная LMS от GARPIUM: обучение HTML и CSS, практика, прогресс и сертификат"
+  title: "GARPIUM LMS",
+  description: "Корпоративная LMS GARPIUM: обучение, компании, сертификаты и личный кабинет"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { requireCompanyAdmin, getCompanyForAdmin } from "@/lib/session";
+import { requireCompanyPanel, getCompanyForPanel, getSession } from "@/lib/session";
+import { isCompanyAdmin } from "@/lib/roles";
 import { CourseAssignmentForm, CourseAssignmentRemoveButton } from "@/components/CourseAssignmentForm";
 import { assignmentScopeLabel } from "@/lib/course-access";
 import { LogoutButton } from "@/components/LogoutButton";
@@ -8,8 +9,10 @@ import { LogoutButton } from "@/components/LogoutButton";
 export const dynamic = "force-dynamic";
 
 export default async function CompanyCoursesPage() {
-  await requireCompanyAdmin();
-  const company = await getCompanyForAdmin();
+  await requireCompanyPanel();
+  const session = await getSession();
+  const canManage = isCompanyAdmin(session?.user?.role);
+  const company = await getCompanyForPanel();
   if (!company) return null;
 
   const verified = company.verificationStatus === "VERIFIED";
@@ -46,7 +49,7 @@ export default async function CompanyCoursesPage() {
       </header>
 
       <section className="lesson-grid">
-        {verified ? (
+        {verified && canManage ? (
           <article className="lesson-card span-12">
             <span className="card-label">Новое назначение</span>
             {courseOptions.length ? (
@@ -64,6 +67,11 @@ export default async function CompanyCoursesPage() {
                 <Link href="/company/departments">Отделы</Link>.
               </p>
             ) : null}
+          </article>
+        ) : verified && !canManage ? (
+          <article className="explain-card span-12">
+            <h2>Назначения</h2>
+            <p className="lesson-text">Создавать назначения могут администраторы. Ниже — текущий список.</p>
           </article>
         ) : (
           <article className="explain-card span-12">
@@ -86,7 +94,7 @@ export default async function CompanyCoursesPage() {
                     {a.user ? ` · ${a.user.firstName} ${a.user.lastName}` : ""}
                   </small>
                 </span>
-                <CourseAssignmentRemoveButton id={a.id} />
+                {canManage ? <CourseAssignmentRemoveButton id={a.id} /> : null}
               </div>
             ))
           ) : (

@@ -121,6 +121,9 @@ async function buildProviders(): Promise<NextAuthOptions["providers"]> {
             id: user.id,
             email: user.email,
             name: `${user.firstName} ${user.lastName}`,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            avatarUrl: user.avatarUrl,
             role: user.role,
             approvalStatus: user.approvalStatus
           };
@@ -323,18 +326,31 @@ export async function getAuthOptions(): Promise<NextAuthOptions> {
             token.sub = dbUser.id;
             token.role = dbUser.role;
             token.approvalStatus = dbUser.approvalStatus;
+            token.firstName = dbUser.firstName;
+            token.lastName = dbUser.lastName;
+            token.avatarUrl = dbUser.avatarUrl;
             return token;
           }
 
           if (user) {
-            const authUser = user as AuthUser;
+            const authUser = user as AuthUser & {
+              firstName?: string;
+              lastName?: string;
+              avatarUrl?: string | null;
+            };
             token.role = authUser.role;
             token.approvalStatus = authUser.approvalStatus;
+            if (authUser.firstName) token.firstName = authUser.firstName;
+            if (authUser.lastName) token.lastName = authUser.lastName;
+            if (authUser.avatarUrl !== undefined) token.avatarUrl = authUser.avatarUrl;
           } else if (token.sub) {
             const dbUser = await db.user.findUnique({ where: { id: token.sub } });
             if (dbUser) {
               token.role = dbUser.role;
               token.approvalStatus = dbUser.approvalStatus;
+              token.firstName = dbUser.firstName;
+              token.lastName = dbUser.lastName;
+              token.avatarUrl = dbUser.avatarUrl;
             }
           }
           return token;
@@ -348,6 +364,12 @@ export async function getAuthOptions(): Promise<NextAuthOptions> {
           session.user.id = token.sub;
           session.user.role = token.role;
           session.user.approvalStatus = token.approvalStatus;
+          session.user.firstName = token.firstName ?? null;
+          session.user.lastName = token.lastName ?? null;
+          session.user.avatarUrl = token.avatarUrl ?? null;
+          if (token.firstName || token.lastName) {
+            session.user.name = `${token.firstName || ""} ${token.lastName || ""}`.trim();
+          }
         }
         return session;
       }

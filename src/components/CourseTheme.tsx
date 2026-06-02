@@ -1,19 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { applyLmsTheme, getStoredTheme } from "@/lib/lms-theme";
 
 export function CourseTheme({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const isHtml =
-    pathname.includes("/courses/html") ||
-    pathname.includes("/lessons/h-") ||
-    (pathname.startsWith("/admin/content/") && pathname.includes("h-"));
+  useEffect(() => {
+    applyLmsTheme(getStoredTheme());
+  }, []);
 
-  const theme = isHtml ? "theme-html" : "theme-css";
-
-  return (
-    <div className={`course-app ${theme}`}>
-      <main className="course-shell">{children}</main>
-    </div>
-  );
+  return <div className="lms-app course-app">{children}</div>;
 }

@@ -1,0 +1,46 @@
+---
+description: GARPIUM product principles and RBAC orientation for all agent work
+alwaysApply: true
+---
+
+# GARPIUM Product Rule
+
+## What GARPIUM is
+
+GARPIUM is a **Corporate Learning Operating System (CLOS)**, not a simple course catalog. It unites LMS, corporate wiki, onboarding, analytics, and HR-adjacent tools in one multi-tenant SaaS.
+
+## Non-negotiables
+
+1. **Single login** — no separate pages for employees, companies, or admins
+2. **Multi-tenant isolation** — filter tenant data by `companyId`; never leak cross-company
+3. **Role-driven UI** — after auth, show sidebar/routes matching `User.role`
+4. **Design continuity** — new UI must match existing tokens in `src/app/(course)/lms-base.css`, soft borders, card layout; do not redesign without explicit request
+5. **Powered by Garpium** — white-label keeps platform attribution
+
+## Role quick reference
+
+```
+Employee → Manager → Company Admin → Company Owner  (tenant)
+Guest | PUBLIC_USER | INSTRUCTOR | SUPPORT | MODERATOR | SUPER_ADMIN  (platform)
+```
+
+## When to read the skill
+
+For tasks involving **roles, permissions, navigation, company flows, onboarding, wiki, analytics, or new modules**:
+
+1. Read `.cursor/skills/garpium-platform/SKILL.md`
+2. For gaps vs concept, read `docs/GARPIUM-IMPLEMENTATION-MAP.md`
+3. For full RBAC spec, read `docs/GARPIUM-RBAC-ACCESS-MODEL.md`
+
+## Implementation defaults
+
+| Task | Guard | Nav update |
+|------|-------|------------|
+| Employee page | `requireApproved()` | `LmsSidebar` main nav |
+| Company admin page | `requireCompanyAdmin()` | `CompanyNav` |
+| Platform page | `requireSuperAdmin()` / `requireLmsAdmin()` | `LmsSidebar` platform |
+| Company API | `requireCompanyAdmin()` + `companyId` filter | — |
+
+## Known gap (do not "fix" silently)
+
+`COMPANY_MANAGER` is currently in `COMPANY_ADMIN_ROLES` — managers see full `/company/*`. Target model restricts managers to their department. Document new manager features accordingly until refactored.

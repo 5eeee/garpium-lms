@@ -1,16 +1,18 @@
 import Link from "next/link";
 import type { User } from "@prisma/client";
 import { db } from "@/lib/db";
-import { requireCompanyAdmin, getCompanyForAdmin } from "@/lib/session";
+import { requireCompanyPanel, getCompanyForPanel, getSession } from "@/lib/session";
 import { JoinRequestActions } from "@/components/JoinRequestActions";
 import { LogoutButton } from "@/components/LogoutButton";
-import { verificationLabel } from "@/lib/roles";
+import { isCompanyAdmin, verificationLabel } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 
 export default async function CompanyDashboardPage() {
-  await requireCompanyAdmin();
-  const company = await getCompanyForAdmin();
+  await requireCompanyPanel();
+  const session = await getSession();
+  const canManage = isCompanyAdmin(session?.user?.role);
+  const company = await getCompanyForPanel();
 
   if (!company) {
     return (
@@ -84,6 +86,15 @@ export default async function CompanyDashboardPage() {
             Структура
           </Link>
         </article>
+        {verified ? (
+          <article className="lesson-card span-4">
+            <span className="card-label">Курсы</span>
+            <h2>Назначения</h2>
+            <Link className="course-button is-primary" href="/company/courses">
+              Назначить
+            </Link>
+          </article>
+        ) : null}
 
         <article className="lesson-card span-12">
           <span className="card-label">Заявки на вступление</span>
@@ -98,7 +109,7 @@ export default async function CompanyDashboardPage() {
                     {request.invitation ? ` · ${request.invitation.displayCode}` : ""}
                   </small>
                 </span>
-                <JoinRequestActions requestId={request.id} />
+                {canManage ? <JoinRequestActions requestId={request.id} /> : null}
               </div>
             ))
           ) : (
@@ -134,7 +145,7 @@ export default async function CompanyDashboardPage() {
       </section>
 
       <footer className="course-footer">
-        <Link className="course-button" href="/admin">
+        <Link className="course-button" href="/company/courses">
           Курсы
         </Link>
         <Link className="course-button" href="/company/settings">

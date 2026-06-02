@@ -2,7 +2,11 @@
 
 import { FormEvent, useState } from "react";
 
-export function DepartmentCreateForm() {
+export function DepartmentCreateForm({
+  departments = []
+}: {
+  departments?: { id: string; name: string; type: string; parentId: string | null }[];
+}) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,7 +23,8 @@ export function DepartmentCreateForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: form.get("name"),
-        type: form.get("type") || "DEPARTMENT"
+        type: form.get("type") || "DEPARTMENT",
+        parentId: form.get("parentId") || undefined
       })
     });
     const data = await response.json();
@@ -50,6 +55,17 @@ export function DepartmentCreateForm() {
             <option value="GROUP">Группа</option>
             <option value="TEAM">Команда</option>
             <option value="BRANCH">Филиал</option>
+          </select>
+        </label>
+        <label className="auth-form__full">
+          Родительский раздел
+          <select name="parentId" defaultValue="">
+            <option value="">Без родителя</option>
+            {departments.map((dept) => (
+              <option key={dept.id} value={dept.id}>
+                {dept.name}
+              </option>
+            ))}
           </select>
         </label>
         <button className="course-button is-primary" disabled={loading} type="submit">

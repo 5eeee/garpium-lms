@@ -1,91 +1,110 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { GarpiumLogo } from "@/components/GarpiumLogo";
 import { TrafficDots } from "@/components/TrafficDots";
 
-type Track = "html" | "css";
+const audiences = [
+  {
+    title: "Сотрудник",
+    text: "Проходите назначенные программы, отслеживайте прогресс и получайте сертификаты."
+  },
+  {
+    title: "HR и компания",
+    text: "Приглашайте команду, назначайте курсы по отделам и контролируйте завершение."
+  },
+  {
+    title: "Партнёр Garpium",
+    text: "Верифицируйте организации, подключайте white-label и API для интеграций."
+  }
+];
+
+const steps = [
+  { n: "1", title: "Регистрация", text: "Создайте аккаунт или войдите через корпоративное SSO." },
+  { n: "2", title: "Верификация", text: "Компания проходит проверку — сотрудники получают доступ." },
+  { n: "3", title: "Назначение", text: "Администратор назначает программы обучения." },
+  { n: "4", title: "Сертификат", text: "По итогам курса выдаётся подтверждение результата." }
+];
 
 export function HomeLanding() {
-  const [track, setTrack] = useState<Track>("html");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("course_track");
-    if (saved === "html" || saved === "css") {
-      setTrack(saved);
-    }
-  }, []);
-
-  function applyTrack(next: Track) {
-    setTrack(next);
-    localStorage.setItem("course_track", next);
-  }
-
-  const isHtml = track === "html";
-
   return (
-    <div className={`is-home ${isHtml ? "theme-html" : "theme-css"}`}>
-      <main className={`page ${isHtml ? "is-html" : "is-css"}`} id="home-panel">
+    <div className="is-home theme-html">
+      <main className="page is-html" id="home-panel">
         <TrafficDots />
         <div className="home-garpium">
           <GarpiumLogo compact />
         </div>
 
-        <div className="track-switch" role="tablist" aria-label="Выбор курса">
-          <button
-            type="button"
-            className={`track-switch__btn${isHtml ? " is-active" : ""}`}
-            data-track="html"
-            role="tab"
-            aria-selected={isHtml}
-            onClick={() => applyTrack("html")}
-          >
-            HTML
-          </button>
-          <button
-            type="button"
-            className={`track-switch__btn${!isHtml ? " is-active" : ""}`}
-            data-track="css"
-            role="tab"
-            aria-selected={!isHtml}
-            onClick={() => applyTrack("css")}
-          >
-            CSS
-          </button>
-        </div>
-
-        <div className="hero">
-          <div className="title-pill">
-            <h1>{isHtml ? "Курс по HTML" : "Курс по CSS"}</h1>
+        <div className="home-hero">
+          <div className="hero">
+            <div className="title-pill">
+              <h1>Корпоративная LMS</h1>
+            </div>
+            <div className="logo-circle" aria-hidden />
+            <p className="background-word" aria-hidden>
+              GARPIUM
+            </p>
           </div>
-          <div className="logo-circle">
-            <img src="/CSS.svg" alt="" className="css-logo" id="home-logo" />
+
+          <p className="home-lead">
+            Многоарендная платформа обучения: компании, сотрудники, верификация и назначение программ — в
+            одном интерфейсе.
+          </p>
+
+          <div className="home-stats">
+            <span className="home-stats__pill">Multi-tenant</span>
+            <span className="home-stats__pill">Корпоративный кабинет</span>
+            <span className="home-stats__pill">Верификация org</span>
+          </div>
+
+          <div className="home-actions">
+            <Link className="home-action" href="/login">
+              Войти
+            </Link>
+            <Link className="home-action home-action--ghost" href="/register">
+              Регистрация
+            </Link>
           </div>
         </div>
 
-        <p className="background-word" aria-hidden="true">
-          {isHtml ? "HTML" : "CSS"}
-        </p>
+        <section className="home-section" aria-labelledby="home-audience-title">
+          <h2 id="home-audience-title" className="home-section__title">
+            Для кого
+          </h2>
+          <div className="home-cards">
+            {audiences.map((item) => (
+              <article className="home-card" key={item.title}>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
 
-        <div className="home-stats">
-          <span>120 уроков</span>
-          <span>1.5 недели</span>
-          <span>Свой проект</span>
-          <span>Сертификат</span>
-        </div>
+        <section className="home-section" aria-labelledby="home-steps-title">
+          <h2 id="home-steps-title" className="home-section__title">
+            Как это работает
+          </h2>
+          <ol className="home-steps">
+            {steps.map((step) => (
+              <li className="home-step" key={step.n}>
+                <span className="home-step__n">{step.n}</span>
+                <div>
+                  <strong>{step.title}</strong>
+                  <p>{step.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
 
-        <nav className="home-actions" aria-label="Навигация курса">
-          <Link className="home-action" href={isHtml ? "/lessons/h-01" : "/lessons/c-01"}>
-            {isHtml ? "Начать HTML" : "Начать CSS"}
-          </Link>
-          <Link className="home-action home-action--ghost" href={isHtml ? "/courses/html" : "/courses/css"}>
-            Карта курса
-          </Link>
-          <Link className="home-action home-action--ghost" href="/login">
-            Личный кабинет
-          </Link>
-        </nav>
+        <footer className="home-footer">
+          <Link href="/login">Вход</Link>
+          <Link href="/register">Регистрация</Link>
+          <a href="https://garpium.com" rel="noreferrer" target="_blank">
+            garpium.com
+          </a>
+        </footer>
       </main>
     </div>
   );

@@ -11,10 +11,14 @@ export default async function CompanyInvitationsPage() {
   const company = await getCompanyForAdmin();
   if (!company) return null;
 
-  const invitations = await db.invitation.findMany({
-    where: { companyId: company.id },
-    orderBy: { createdAt: "desc" }
-  });
+  const [invitations, departments] = await Promise.all([
+    db.invitation.findMany({
+      where: { companyId: company.id },
+      include: { department: true },
+      orderBy: { createdAt: "desc" }
+    }),
+    db.department.findMany({ where: { companyId: company.id }, orderBy: { name: "asc" } })
+  ]);
 
   const verified = company.verificationStatus === "VERIFIED";
 
@@ -34,9 +38,14 @@ export default async function CompanyInvitationsPage() {
         {verified ? (
           <article className="lesson-card span-12">
             <span className="card-label">Новое приглашение</span>
-            <InviteCreateForm />
+            <InviteCreateForm departments={departments} />
           </article>
-        ) : null}
+        ) : (
+          <article className="explain-card span-12">
+            <h2>Верификация не завершена</h2>
+            <p className="lesson-text">Создание приглашений откроется после подтверждения организации.</p>
+          </article>
+        )}
 
         <article className="lesson-card span-12">
           <span className="card-label">Список</span>
@@ -47,6 +56,7 @@ export default async function CompanyInvitationsPage() {
                   <code>{invite.displayCode}</code>
                   <small>
                     /invite/{invite.code} · {invite.type} · {invite.useCount} активаций
+                    {invite.department ? ` · ${invite.department.name}` : ""}
                     {!invite.active ? " · закрыто" : ""}
                   </small>
                 </span>

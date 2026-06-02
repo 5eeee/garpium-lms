@@ -1,0 +1,2 @@
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "passwordResetOtpHash" TEXT;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "passwordResetOtpExpires" TIMESTAMP(3);

@@ -2,21 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const links = [
-  { href: "/company", label: "Дашборд", exact: true },
-  { href: "/company/employees", label: "Сотрудники" },
-  { href: "/company/departments", label: "Отделы" },
-  { href: "/company/courses", label: "Курсы" },
-  { href: "/company/invitations", label: "Приглашения" },
-  { href: "/company/settings", label: "Настройки" },
-  { href: "/company/analytics", label: "Аналитика" },
-  { href: "/admin/api", label: "API" },
-  { href: "/integration", label: "Интеграции" }
-];
+import { COMPANY_NAV, liveNavLinks } from "@/lib/nav-config";
 
 export function CompanyNav() {
   const pathname = usePathname();
+  const links = liveNavLinks(COMPANY_NAV);
 
   return (
     <nav className="course-nav course-nav--top" aria-label="Кабинет компании">

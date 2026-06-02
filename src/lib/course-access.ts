@@ -52,6 +52,12 @@ export async function userCanAccessCourse(user: AccessUser, courseSlug: string) 
   return access.includes(courseSlug);
 }
 
+export function lessonTrackSlug(lessonId: string): "html" | "css" | null {
+  if (lessonId.startsWith("h-")) return "html";
+  if (lessonId.startsWith("c-")) return "css";
+  return null;
+}
+
 export function assignmentScopeLabel(scope: string) {
   const labels: Record<string, string> = {
     COMPANY: "Вся компания",

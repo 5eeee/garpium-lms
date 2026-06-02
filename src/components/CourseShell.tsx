@@ -1,37 +1,38 @@
-import { CourseNav } from "@/components/CourseNav";
-import { GarpiumLogo, PoweredByGarpium } from "@/components/GarpiumLogo";
+"use client";
+
+import { useState } from "react";
+import { LmsSidebar } from "@/components/LmsSidebar";
+import { LmsTopBar } from "@/components/LmsTopBar";
+import { PoweredByGarpium } from "@/components/GarpiumLogo";
 import type { CompanyBranding } from "@/lib/company";
 
 export function CourseShell({
   children,
-  showNav = true,
   company = null
 }: {
   children: React.ReactNode;
-  showNav?: boolean;
   company?: CompanyBranding | null;
 }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const showPoweredBy = company ? company.showPoweredBy : true;
 
   return (
-    <>
-      <header className="course-app-header">
-        <div className="course-app-header__brand">
-          {company?.logoUrl ? (
-            <>
-              <img alt={company.name} className="course-app-header__company-logo" src={company.logoUrl} />
-              <span className="course-app-header__company-name">{company.name}</span>
-            </>
-          ) : (
-            <GarpiumLogo />
-          )}
+    <div className="lms-shell">
+      <LmsSidebar
+        companyLogo={company?.logoUrl}
+        companyName={company?.name}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+      <div className="lms-main">
+        <LmsTopBar onMenuToggle={() => setSidebarOpen((v) => !v)} />
+        <div className="lms-content">
+          <div className="lms-content__inner">
+            {children}
+            {showPoweredBy ? <PoweredByGarpium /> : null}
+          </div>
         </div>
-        {showNav ? <CourseNav /> : null}
-      </header>
-      <div className="course-content">
-        {children}
-        {showPoweredBy ? <PoweredByGarpium /> : null}
       </div>
-    </>
+    </div>
   );
 }

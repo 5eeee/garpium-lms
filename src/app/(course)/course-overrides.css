@@ -1,125 +1,14 @@
-/* ===== Full-screen course shell (no Mac frame) ===== */
+/* Доп. стили панелей (shell — в lms-shell.css) */
 
-body:has(.course-app) {
-  padding: 0 !important;
-  background: #fff !important;
+.course-app .course-kicker {
+  border-color: rgb(29 29 27 / 12%);
 }
 
-.course-app {
-  min-height: 100dvh;
-  background: #fff;
-  color: #1d1d1b;
-}
-
-.course-app .course-shell {
-  min-height: 100dvh;
-  padding: 0;
-  border-radius: 0;
-  background: #fff;
-  animation: none;
-  overflow: visible;
-}
-
-.course-app .course-shell::before {
-  display: none;
-}
-
-.course-app .traffic {
-  display: none !important;
-}
-
-/* ===== Sticky header ===== */
-
-.course-app-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 20px;
-  padding: 14px clamp(16px, 4vw, 48px);
-  border-bottom: 1px solid rgb(29 29 27 / 10%);
-  background: rgb(255 255 255 / 96%);
-  backdrop-filter: blur(10px);
-}
-
-.course-app-header__brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.course-app-header__company-logo {
-  height: 32px;
-  width: auto;
-  max-width: 140px;
-  object-fit: contain;
-}
-
-.course-app-header__company-name {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.course-app .course-content {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: clamp(22px, 4vw, 42px);
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 48px) clamp(48px, 6vw, 80px);
-}
-
-.course-app .course-nav {
-  margin: 0;
-  flex: 1;
-  justify-content: flex-end;
-}
-
-.course-app .course-nav--top {
-  margin-bottom: 0;
-}
-
-.course-app .course-top {
-  gap: 16px;
-}
-
-.course-app .course-title {
-  font-size: clamp(36px, 7vw, 88px);
-}
-
-.course-app .lesson-grid {
-  align-items: start;
-}
-
-.course-app .lesson-card,
-.course-app .explain-card,
-.course-app .code-playground {
-  min-height: 0;
-}
-
-.course-app .lesson-sections {
-  display: contents;
-}
-
-.course-app .course-footer {
-  margin-top: 8px;
-  padding-top: 16px;
-  border-top: 1px solid rgb(29 29 27 / 10%);
-}
-
-.course-app .course-footer--lesson {
-  position: sticky;
-  bottom: 0;
-  z-index: 5;
-  margin-top: 24px;
-  padding: 16px 0 8px;
-  background: linear-gradient(transparent, #fff 30%);
+.course-app .course-button:hover,
+.course-app .course-nav a.is-active {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
 }
 
 /* ===== GARPIUM logo ===== */
@@ -160,6 +49,222 @@ body:has(.course-app) {
   border-top: 1px solid rgb(29 29 27 / 12%);
   font-size: 12px;
   color: rgb(29 29 27 / 55%);
+}
+
+/* ===== Learning loop ===== */
+
+.lesson-readable {
+  display: grid;
+  gap: 14px;
+}
+
+.lesson-readable p {
+  margin: 0;
+  color: rgb(29 29 27 / 70%);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.practice-card {
+  display: grid;
+  gap: 14px;
+  padding: clamp(18px, 2.4vw, 24px);
+  border: var(--border-soft, 1px solid rgb(29 29 27 / 10%));
+  border-radius: var(--radius-lg, 24px);
+  background: #fff;
+}
+
+.practice-card__head {
+  display: grid;
+  gap: 6px;
+}
+
+.practice-card__head strong {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.practice-card__editor {
+  width: 100%;
+  min-height: 180px;
+  padding: 14px;
+  border: var(--border-soft, 1px solid rgb(29 29 27 / 10%));
+  border-radius: var(--radius-md, 16px);
+  background: #1d1d1b;
+  color: #fff;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.practice-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted, rgb(29 29 27 / 58%));
+  font-size: 13px;
+}
+
+.practice-card__message {
+  margin: 0;
+  padding: 10px 12px;
+  border: var(--border-soft, 1px solid rgb(29 29 27 / 10%));
+  border-radius: 14px;
+  background: rgb(29 29 27 / 4%);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.practice-card__message.is-ok {
+  background: rgb(34 160 107 / 10%);
+  color: #176b49;
+}
+
+.practice-card__diagnostics {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.practice-card__diagnostics li {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--surface-muted, #f6f6f5);
+  font-size: 13px;
+}
+
+.practice-card__diagnostics span {
+  color: var(--muted, rgb(29 29 27 / 58%));
+}
+
+.certificate-verify {
+  display: grid;
+  gap: 24px;
+  padding: clamp(24px, 4vw, 40px);
+}
+
+.certificate-verify__body {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.certificate-verify__body > div {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+  border: var(--border-soft, 1px solid rgb(29 29 27 / 10%));
+  border-radius: var(--radius-md, 16px);
+  background: var(--surface-muted, #f6f6f5);
+}
+
+.certificate-verify__body strong {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.certificate-verify__qr {
+  place-items: center;
+  min-height: 120px;
+  border: var(--border-strong, 1.5px solid #1d1d1b) !important;
+  background:
+    linear-gradient(90deg, #1d1d1b 10px, transparent 10px) 0 0 / 24px 24px,
+    linear-gradient(#1d1d1b 10px, transparent 10px) 0 0 / 24px 24px,
+    #fff !important;
+  color: #1d1d1b;
+  font-family: "Montserrat Alternates", "Inter", sans-serif;
+  font-weight: 900;
+}
+
+.company-toolbar,
+.company-row-actions,
+.invite-result,
+.white-label-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.company-toolbar {
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: var(--muted, rgb(29 29 27 / 58%));
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.company-row-actions {
+  justify-content: flex-end;
+}
+
+.company-row-actions select {
+  min-height: 38px;
+  padding: 0 10px;
+  border: var(--border-soft, 1px solid rgb(29 29 27 / 10%));
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+}
+
+.invite-result,
+.white-label-preview {
+  margin-top: 12px;
+  padding: 12px;
+  border: var(--border-soft, 1px solid rgb(29 29 27 / 10%));
+  border-radius: var(--radius-md, 16px);
+  background: #fff;
+}
+
+.white-label-preview span {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: var(--border-soft, 1px solid rgb(29 29 27 / 10%));
+}
+
+.white-label-preview small {
+  color: var(--muted, rgb(29 29 27 / 58%));
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: var(--border-soft, 1px solid rgb(29 29 27 / 10%));
+}
+
+.skill-row:last-child {
+  border-bottom: 0;
+}
+
+.studio-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr 260px;
+  gap: 14px;
+}
+
+@media (max-width: 1100px) {
+  .studio-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  .certificate-verify__body {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ===== Roadmap path ===== */
@@ -594,4 +699,64 @@ body:has(.course-app) {
 
 .company-steps li + li {
   margin-top: 8px;
+}
+
+/* ===== Company / platform sub-nav ===== */
+
+.panel-subnav {
+  margin: -8px 0 4px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid rgb(29 29 27 / 10%);
+}
+
+.panel-subnav .course-nav {
+  margin: 0;
+  width: 100%;
+}
+
+.admin-row--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.admin-row--stack .admin-actions {
+  justify-content: flex-start;
+}
+
+.empty-state {
+  margin: 4px 0 0;
+  padding: 14px 16px;
+  border: 2px dashed rgb(29 29 27 / 14%);
+  border-radius: 14px;
+  background: rgb(29 29 27 / 3%);
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .course-app .lesson-grid .lesson-card.span-4,
+  .course-app .lesson-grid .lesson-card.span-6 {
+    grid-column: 1 / -1;
+  }
+
+  .admin-row:not(.admin-row--stack) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-row:not(.admin-row--stack) .admin-actions,
+  .admin-row:not(.admin-row--stack) .course-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .panel-subnav .course-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
 }

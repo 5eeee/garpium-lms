@@ -1,5 +1,6 @@
 #!/bin/bash
-# Быстрый деплой на VPS (Docker layer cache включён).
+# Полный деплой на VPS (npm ci + next build на сервере, 15–30 мин).
+# Для обычных обновлений UI: deploy/deploy-fast.ps1 (~2–5 мин).
 # Запуск на сервере после загрузки /tmp/lms-deploy.tgz:
 #   bash deploy/vps-deploy.sh
 set -euo pipefail

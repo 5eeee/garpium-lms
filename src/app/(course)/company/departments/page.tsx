@@ -13,7 +13,8 @@ export default async function CompanyDepartmentsPage() {
 
   const departments = await db.department.findMany({
     where: { companyId: company.id },
-    orderBy: { name: "asc" }
+    include: { members: true },
+    orderBy: [{ parentId: "asc" }, { name: "asc" }]
   });
 
   const verified = company.verificationStatus === "VERIFIED";
@@ -30,18 +31,29 @@ export default async function CompanyDepartmentsPage() {
         {verified ? (
           <article className="lesson-card span-12">
             <span className="card-label">Новый отдел</span>
-            <DepartmentCreateForm />
+            <DepartmentCreateForm departments={departments} />
           </article>
-        ) : null}
+        ) : (
+          <article className="explain-card span-12">
+            <h2>Верификация не завершена</h2>
+            <p className="lesson-text">Структура отделов доступна после подтверждения организации суперадмином.</p>
+          </article>
+        )}
 
         <article className="lesson-card span-12">
           <span className="card-label">Структура</span>
           {departments.length ? (
             departments.map((dept) => (
-              <div className="admin-row" key={dept.id}>
+              <div
+                className="admin-row"
+                key={dept.id}
+                style={{ marginLeft: dept.parentId ? 24 : 0 }}
+              >
                 <span>
                   {dept.name}
-                  <small>{dept.type}</small>
+                  <small>
+                    {dept.type} · {dept.members.length} сотрудников
+                  </small>
                 </span>
               </div>
             ))

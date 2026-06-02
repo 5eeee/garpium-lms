@@ -55,7 +55,9 @@ export default async function PlatformOrganizationsPage() {
               </div>
             ))
           ) : (
-            <p className="lesson-text">Новых заявок нет.</p>
+            <div className="empty-state">
+              <p className="lesson-text">Новых заявок нет — компании появятся после регистрации на платформе.</p>
+            </div>
           )}
         </article>
 

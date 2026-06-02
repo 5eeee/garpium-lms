@@ -2,6 +2,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireCompanyAdmin, getCompanyForAdmin } from "@/lib/session";
 import { LogoutButton } from "@/components/LogoutButton";
+import { DomainCreateForm } from "@/components/DomainCreateForm";
 import { verificationLabel } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
@@ -36,6 +37,7 @@ export default async function CompanySettingsPage() {
         <article className="lesson-card span-12">
           <span className="card-label">Корпоративные домены</span>
           <h2>{domains.length}</h2>
+          <DomainCreateForm />
           {domains.length ? (
             domains.map((item) => (
               <div className="admin-row" key={item.id}>
@@ -45,11 +47,7 @@ export default async function CompanySettingsPage() {
                 </span>
               </div>
             ))
-          ) : (
-            <p className="lesson-text">
-              Добавление доменов для автопредложения вступления — в следующем обновлении.
-            </p>
-          )}
+          ) : null}
         </article>
 
         <article className="explain-card span-12">
@@ -58,6 +56,20 @@ export default async function CompanySettingsPage() {
             Логотип: {company.logoUrl || "не задан"} · Цвета HTML/CSS: {company.brandHtml} / {company.brandCss}
           </p>
           <p className="lesson-text">Powered by Garpium — всегда отображается в интерфейсе.</p>
+          <div className="white-label-preview">
+            <span style={{ background: company.brandCss }} />
+            <strong>{company.name}</strong>
+            <small>{company.subdomain ? `${company.subdomain}.lms.garpium.com` : "subdomain не задан"}</small>
+          </div>
+        </article>
+
+        <article className="lesson-card span-12">
+          <span className="card-label">Безопасность</span>
+          <h2>Журнал действий</h2>
+          <p className="lesson-text">Аудит изменений прав, приглашений, доменов и структуры компании.</p>
+          <Link className="course-button" href="/company/settings/audit">
+            Открыть журнал
+          </Link>
         </article>
       </section>
 

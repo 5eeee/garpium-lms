@@ -5,6 +5,7 @@
 | Роль | Email | Пароль | Куда попадёт |
 |------|-------|--------|--------------|
 | **Суперадмин платформы** | `superadmin@garpium.com` | `superadmin12345` | `/admin` → верификация организаций |
+| **Владелец (ожидает верификации)** | `pending-org@example.com` | `pendingorg12345` | `/company` — заявка в очереди суперадмина |
 | **Владелец компании** | `admin@example.com` | `admin12345` | `/company` |
 | **Сотрудник (одобрен)** | `student@example.com` | `student12345` | `/dashboard` |
 | **Сотрудник (ожидает)** | `pending@example.com` | `pending12345` | `/pending` |

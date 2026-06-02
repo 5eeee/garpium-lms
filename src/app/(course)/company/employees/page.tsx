@@ -1,19 +1,25 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { requireCompanyAdmin, getCompanyForAdmin } from "@/lib/session";
+import { requireCompanyPanel, getCompanyForPanel, getSession } from "@/lib/session";
 import { LogoutButton } from "@/components/LogoutButton";
-import { roleLabel } from "@/lib/roles";
+import { CompanyMemberActions } from "@/components/CompanyMemberActions";
+import { isCompanyAdmin, roleLabel } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 
 export default async function CompanyEmployeesPage() {
-  await requireCompanyAdmin();
-  const company = await getCompanyForAdmin();
+  await requireCompanyPanel();
+  const session = await getSession();
+  const canManage = isCompanyAdmin(session?.user?.role);
+  const company = await getCompanyForPanel();
   if (!company) return null;
 
   const members = await db.organizationMember.findMany({
     where: { companyId: company.id },
-    include: { user: true, department: true },
+    include: {
+      user: { include: { progress: { where: { status: "DONE" } } } },
+      department: true
+    },
     orderBy: { joinedAt: "desc" }
   });
 
@@ -27,6 +33,10 @@ export default async function CompanyEmployeesPage() {
 
       <section className="lesson-grid">
         <article className="lesson-card span-12">
+          <div className="company-toolbar">
+            <span className="card-label">Команда</span>
+            <span>{members.length} сотрудников</span>
+          </div>
           {members.length ? (
             members.map((member) => (
               <div className="admin-row" key={member.id}>
@@ -35,12 +45,29 @@ export default async function CompanyEmployeesPage() {
                   <small>
                     {member.user.email} · {roleLabel(member.orgRole)} · {member.status}
                     {member.department ? ` · ${member.department.name}` : ""}
+                    {` · ${member.user.progress.length} уроков`}
                   </small>
                 </span>
+                {canManage ? (
+                  <CompanyMemberActions
+                    currentRole={member.orgRole}
+                    currentStatus={member.status}
+                    memberId={member.id}
+                  />
+                ) : null}
               </div>
             ))
           ) : (
-            <p className="lesson-text">Пока нет сотрудников. Создайте приглашение в разделе «Приглашения».</p>
+            <p className="lesson-text">
+              {canManage ? (
+                <>
+                  Пока нет сотрудников.{" "}
+                  <Link href="/company/invitations">Создайте приглашение</Link>.
+                </>
+              ) : (
+                "Пока нет сотрудников в вашей зоне видимости."
+              )}
+            </p>
           )}
         </article>
       </section>

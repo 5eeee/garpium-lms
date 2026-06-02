@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireCompanyAdmin } from "@/lib/session";
+import { getCompanyAdminApiSession } from "@/lib/admin-api";
 import { courseAssignmentSchema } from "@/lib/validators";
 import { writeAuditLog } from "@/lib/audit";
 
 export async function GET() {
-  const session = await requireCompanyAdmin();
+  const session = await getCompanyAdminApiSession();
+  if (!session) return NextResponse.json({ error: "Нет доступа." }, { status: 403 });
   const admin = await db.user.findUnique({
     where: { email: session.user.email! },
     include: { company: true }
@@ -29,7 +30,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const session = await requireCompanyAdmin();
+  const session = await getCompanyAdminApiSession();
+  if (!session) return NextResponse.json({ error: "Нет доступа." }, { status: 403 });
   const admin = await db.user.findUnique({
     where: { email: session.user.email! },
     include: { company: true }
@@ -99,7 +101,8 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const session = await requireCompanyAdmin();
+  const session = await getCompanyAdminApiSession();
+  if (!session) return NextResponse.json({ error: "Нет доступа." }, { status: 403 });
   const admin = await db.user.findUnique({
     where: { email: session.user.email! },
     select: { id: true, companyId: true }

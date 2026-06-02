@@ -1,97 +1,123 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { LessonSections } from "@/components/LessonSections";
-import { LessonVisual } from "@/components/LessonVisual";
-import { getAdjacentLesson, getLesson } from "@/lib/course-data";
+import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { requireApproved } from "@/lib/session";
-import { CodeEditor } from "@/components/CodeEditor";
+import { requireSession } from "@/lib/session";
+import { canUserAccessCourse } from "@/lib/learning";
+import { TaskPractice } from "@/components/learning/TaskPractice";
 
 export const dynamic = "force-dynamic";
 
+function textFromContent(content: unknown, fallback: string) {
+  if (content && typeof content === "object" && "theory" in content) {
+    const theory = (content as { theory?: unknown }).theory;
+    if (typeof theory === "string" && theory.trim()) return theory;
+  }
+  return fallback;
+}
+
 export default async function LessonPage({ params }: { params: Promise<{ lessonId: string }> }) {
-  await requireApproved();
-  const { lessonId } = await params;
-  const base = getLesson(lessonId);
-  if (!base) notFound();
+  const [{ lessonId }, session] = await Promise.all([params, requireSession()]);
+  const [user, lesson] = await Promise.all([
+    db.user.findUnique({
+      where: { email: session.user.email! },
+      include: { company: true, memberships: { where: { status: "ACTIVE" } } }
+    }),
+    db.lesson.findUnique({
+      where: { id: lessonId },
+      include: {
+        tasks: true,
+        progress: { where: { userId: session.user.id! } },
+        module: { include: { course: { include: { modules: { include: { lessons: true } } } } } }
+      }
+    })
+  ]);
 
-  const dbLesson = await db.lesson.findUnique({
-    where: { id: lessonId },
-    include: { tasks: true }
-  });
+  if (!user) redirect("/login");
+  if (!lesson) notFound();
+  if (!(await canUserAccessCourse(user, lesson.module.course.slug))) redirect("/learn");
 
-  const lesson = { ...base };
-  if (dbLesson?.tasks[0]) {
-    lesson.task = {
-      type: dbLesson.tasks[0].type.toLowerCase() as "html" | "css",
-      label: dbLesson.tasks[0].label,
-      starter: dbLesson.tasks[0].starter,
-      preview: dbLesson.tasks[0].preview,
-      primary: dbLesson.tasks[0].primary,
-      acceptable: dbLesson.tasks[0].acceptable,
-      wrongHints: dbLesson.tasks[0].wrongHints as { pattern: string; msg: string }[]
-    };
+  if (lesson.progress[0]?.status !== "DONE") {
+    await db.progress.upsert({
+      where: { userId_lessonId: { userId: user.id, lessonId: lesson.id } },
+      update: { status: "IN_PROGRESS" },
+      create: { userId: user.id, lessonId: lesson.id, status: "IN_PROGRESS" }
+    });
   }
 
-  const content = dbLesson?.content as { theory?: string; sections?: typeof lesson.sections } | undefined;
-  const sections = content?.sections || lesson.sections || [];
-  const prev = getAdjacentLesson(lesson.id, "prev");
-  const next = getAdjacentLesson(lesson.id, "next");
+  const orderedLessons = lesson.module.course.modules
+    .flatMap((module) => module.lessons)
+    .sort((a, b) => a.order - b.order);
+  const index = orderedLessons.findIndex((item) => item.id === lesson.id);
+  const prev = orderedLessons[index - 1] ?? null;
+  const next = orderedLessons[index + 1] ?? null;
+  const task = lesson.tasks[0] ?? null;
 
   return (
     <>
       <header className="course-top">
-        <span className="course-kicker">
-          {lesson.track.toUpperCase()} / {lesson.order}/60 · {lesson.module}
-        </span>
+        <span className="course-kicker">{lesson.module.course.title}</span>
         <h1 className="course-title">{lesson.title}</h1>
         <p className="course-lead">{lesson.simple}</p>
-        {lesson.learn?.length ? (
-          <ul className="lesson-text">
-            {lesson.learn.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        ) : null}
+        <Link className="course-button" href={`/learn/${lesson.module.course.slug}`}>
+          ← К программе
+        </Link>
       </header>
 
       <section className="lesson-grid">
-        <article className="lesson-card span-6">
-          <span className="card-label">Визуал</span>
-          <h2>Как это выглядит</h2>
-          <LessonVisual lesson={lesson} />
+        <article className="lesson-card span-8">
+          <span className="card-label">Теория</span>
+          <div className="lesson-readable">
+            {textFromContent(lesson.content, lesson.simple)
+              .split("\n")
+              .filter(Boolean)
+              .map((paragraph, paragraphIndex) => (
+                <p key={paragraphIndex}>{paragraph}</p>
+              ))}
+          </div>
         </article>
 
-        {lesson.project ? (
-          <article className="lesson-card span-6">
-            <span className="card-label">Проект</span>
-            <h2>Шаг {lesson.project.step}</h2>
-            <p className="lesson-text">{lesson.project.text}</p>
+        <aside className="explain-card span-4">
+          <span className="card-label">Контекст</span>
+          <h2>{lesson.module.title}</h2>
+          <p className="lesson-text">
+            Урок даёт {lesson.points} очков. После успешной практики прогресс сохранится автоматически.
+          </p>
+        </aside>
+
+        {task ? (
+          <div className="span-12">
+            <TaskPractice
+              task={{
+                id: task.id,
+                label: task.label,
+                starter: task.starter,
+                preview: task.preview,
+                maxLength: task.maxLength
+              }}
+            />
+          </div>
+        ) : (
+          <article className="lesson-card span-12">
+            <span className="card-label">Завершение</span>
+            <h2>Практика не требуется</h2>
+            <p className="lesson-text">Этот урок можно завершить просмотром. Практические задания появятся позже.</p>
           </article>
-        ) : null}
-
-        <LessonSections sections={sections} />
-
-        <article className="lesson-card span-12">
-          <CodeEditor lesson={lesson} />
-        </article>
+        )}
       </section>
 
-      <footer className="course-footer course-footer--lesson">
+      <footer className="course-footer">
         {prev ? (
           <Link className="course-button" href={`/lessons/${prev.id}`}>
-            ← {prev.title}
+            ← Предыдущий
           </Link>
-        ) : (
-          <span />
-        )}
+        ) : null}
         {next ? (
-          <Link className="course-button is-primary" href={`/lessons/${next.id}`}>
-            {next.title} →
+          <Link className="course-button is-accent" href={`/lessons/${next.id}`}>
+            Следующий →
           </Link>
         ) : (
-          <Link className="course-button is-primary" href="/dashboard">
-            В кабинет
+          <Link className="course-button is-accent" href={`/learn/${lesson.module.course.slug}`}>
+            К программе
           </Link>
         )}
       </footer>

@@ -1,0 +1,217 @@
+/* Global LMS theme tokens + dark overrides */
+
+html {
+  --text-primary: #1d1d1b;
+  --text-secondary: rgb(29 29 27 / 82%);
+  --text-muted: rgb(29 29 27 / 58%);
+  --lms-bg: #ffffff;
+  --lms-surface: #ffffff;
+  --lms-surface-muted: #f6f6f5;
+  --lms-border: rgb(29 29 27 / 10%);
+  --lms-stroke-color: #1d1d1b;
+}
+
+html[data-lms-theme="dark"] {
+  color-scheme: dark;
+  --text-primary: #f2f2ef;
+  --text-secondary: rgb(242 242 239 / 82%);
+  --text-muted: rgb(242 242 239 / 58%);
+  --lms-bg: #141412;
+  --lms-surface: #1e1e1c;
+  --lms-surface-muted: #222220;
+  --lms-border: rgb(242 242 239 / 10%);
+  --lms-stroke-color: rgb(242 242 239 / 18%);
+}
+
+html[data-lms-theme="dark"] body:has(.lms-app) {
+  background: var(--lms-bg) !important;
+}
+
+html[data-lms-theme="dark"] .lms-app,
+html[data-lms-theme="dark"] .course-app {
+  --ink: var(--text-primary);
+  --brand: var(--text-primary);
+  --brand-soft: #1a1a18;
+  --brand-rgb: 242 242 239;
+  --accent-soft: rgb(0 128 255 / 12%);
+  --muted: var(--text-muted);
+  --border-strong: 1.5px solid var(--lms-stroke-color);
+  --border-soft: 1px solid var(--lms-border);
+  --surface-muted: var(--lms-surface-muted);
+  --lms-stroke: 1.5px solid var(--lms-stroke-color);
+  color: var(--text-primary);
+  background: var(--lms-bg);
+}
+
+html[data-lms-theme="dark"] .lms-shell {
+  background: var(--lms-bg);
+}
+
+html[data-lms-theme="dark"] .lms-sidebar,
+html[data-lms-theme="dark"] .lms-topbar,
+html[data-lms-theme="dark"] .lms-topbar__dropdown,
+html[data-lms-theme="dark"] .lms-icon-btn,
+html[data-lms-theme="dark"] .lms-sidebar__user,
+html[data-lms-theme="dark"] .lms-course-card,
+html[data-lms-theme="dark"] .lms-frame,
+html[data-lms-theme="dark"] .lms-card,
+html[data-lms-theme="dark"] .lesson-card,
+html[data-lms-theme="dark"] .explain-card,
+html[data-lms-theme="dark"] .dash-card,
+html[data-lms-theme="dark"] .dash-continue,
+html[data-lms-theme="dark"] .dash-portal-link,
+html[data-lms-theme="dark"] .settings-theme-card,
+html[data-lms-theme="dark"] .settings-contacts-full,
+html[data-lms-theme="dark"] .pdata-panel,
+html[data-lms-theme="dark"] .pdata-flow,
+html[data-lms-theme="dark"] .avatar-crop-modal,
+html[data-lms-theme="dark"] .course-kicker,
+html[data-lms-theme="dark"] .course-nav--top,
+html[data-lms-theme="dark"] .auth-form input,
+html[data-lms-theme="dark"] .auth-form select,
+html[data-lms-theme="dark"] .auth-form textarea {
+  background: var(--lms-surface);
+  color: var(--text-primary);
+  border-color: var(--lms-border);
+}
+
+html[data-lms-theme="dark"] .course-button:not(.is-primary):not(.is-accent) {
+  background: var(--lms-surface);
+  color: var(--text-primary);
+  border-color: var(--lms-stroke-color);
+}
+
+html[data-lms-theme="dark"] .course-button:not(.is-primary):not(.is-accent):hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+html[data-lms-theme="dark"] .lms-sidebar__link {
+  color: var(--text-secondary);
+}
+
+html[data-lms-theme="dark"] .lms-sidebar__link:hover {
+  background: #2a2a28;
+  border-color: var(--lms-stroke-color);
+  color: var(--text-primary);
+}
+
+html[data-lms-theme="dark"] .lms-sidebar__link.is-active,
+html[data-lms-theme="dark"] .account-tabs__item.is-active {
+  background: #f2f2ef;
+  color: #1d1d1b;
+  border-color: #f2f2ef;
+}
+
+html[data-lms-theme="dark"] .lms-sidebar__section,
+html[data-lms-theme="dark"] .lms-sidebar__profile-text small,
+html[data-lms-theme="dark"] .course-lead,
+html[data-lms-theme="dark"] .lesson-text,
+html[data-lms-theme="dark"] .dash-empty,
+html[data-lms-theme="dark"] .dash-card__label,
+html[data-lms-theme="dark"] .dash-verify-banner__body p,
+html[data-lms-theme="dark"] .account-verify-status__head p,
+html[data-lms-theme="dark"] .pdata-name-edit__skip,
+html[data-lms-theme="dark"] .pdata-msg,
+html[data-lms-theme="dark"] .avatar-crop-modal__hint {
+  color: var(--text-muted);
+}
+
+html[data-lms-theme="dark"] .course-title,
+html[data-lms-theme="dark"] .course-top h1,
+html[data-lms-theme="dark"] .course-top h2,
+html[data-lms-theme="dark"] .dash-card h2,
+html[data-lms-theme="dark"] .settings-theme-card h2,
+html[data-lms-theme="dark"] .settings-contacts-full__head h2,
+html[data-lms-theme="dark"] .account-head__name h1,
+html[data-lms-theme="dark"] .pdata-row__label,
+html[data-lms-theme="dark"] .pdata-row__value,
+html[data-lms-theme="dark"] .account-verify-status__head strong,
+html[data-lms-theme="dark"] .account-verify-badge,
+html[data-lms-theme="dark"] .lms-topbar__title,
+html[data-lms-theme="dark"] .lms-sidebar__profile-text strong {
+  color: var(--text-primary);
+}
+
+html[data-lms-theme="dark"] .account-head,
+html[data-lms-theme="dark"] .account-verify-status,
+html[data-lms-theme="dark"] .dash-verify-banner {
+  background: var(--lms-surface-muted);
+}
+
+html[data-lms-theme="dark"] .account-head__avatar-badge {
+  border-color: var(--lms-surface-muted);
+}
+
+html[data-lms-theme="dark"] .settings-theme__btn,
+html[data-lms-theme="dark"] .pdata-name-edit input,
+html[data-lms-theme="dark"] .pdata-flow input {
+  background: #2a2a28;
+  border-color: var(--lms-border);
+  color: var(--text-primary);
+}
+
+html[data-lms-theme="dark"] .settings-theme__btn.is-active {
+  background: #f2f2ef;
+  color: #1d1d1b;
+}
+
+html[data-lms-theme="dark"] .account-tabs__item {
+  color: var(--text-secondary);
+}
+
+html[data-lms-theme="dark"] .account-tabs__item:hover {
+  border-color: var(--lms-stroke-color);
+  color: var(--text-primary);
+}
+
+html[data-lms-theme="dark"] .account-verify-badge {
+  background: #2a2a28;
+  border-color: var(--lms-border);
+}
+
+html[data-lms-theme="dark"] .account-verify-badge.is-ok {
+  background: rgb(34 160 107 / 14%);
+  border-color: rgb(34 160 107 / 28%);
+}
+
+html[data-lms-theme="dark"] .account-verify-status.is-complete {
+  background: rgb(34 160 107 / 10%);
+  border-color: rgb(34 160 107 / 22%);
+}
+
+html[data-lms-theme="dark"] .account-verify-badge__icon,
+html[data-lms-theme="dark"] .pdata-row__label--brand {
+  color: var(--text-primary);
+}
+
+html[data-lms-theme="dark"] .lms-topbar__dropdown a:hover,
+html[data-lms-theme="dark"] .lms-topbar__dropdown button:hover,
+html[data-lms-theme="dark"] .lms-course-card:hover {
+  background: #2a2a28;
+}
+
+html[data-lms-theme="dark"] .explain-card {
+  background: #252523;
+}
+
+html[data-lms-theme="dark"] .progress-bar,
+html[data-lms-theme="dark"] .dash-progress {
+  background: rgb(242 242 239 / 10%);
+}
+
+html[data-lms-theme="dark"] .lms-sidebar-backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+
+html[data-lms-theme="dark"] .pdata-flow {
+  border-color: var(--lms-border);
+}
+
+html[data-lms-theme="dark"] .pdata-row {
+  border-bottom-color: var(--lms-border);
+}
+
+html[data-lms-theme="dark"] .gosuslugi-logo rect {
+  fill: #fff;
+}

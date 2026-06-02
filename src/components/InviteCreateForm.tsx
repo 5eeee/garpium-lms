@@ -2,7 +2,11 @@
 
 import { FormEvent, useState } from "react";
 
-export function InviteCreateForm() {
+export function InviteCreateForm({
+  departments = []
+}: {
+  departments?: { id: string; name: string }[];
+}) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,6 +26,7 @@ export function InviteCreateForm() {
     const payload: Record<string, unknown> = {
       type,
       assignRole: form.get("assignRole") || "COMPANY_EMPLOYEE",
+      departmentId: form.get("departmentId") || undefined,
       jobTitle: String(form.get("jobTitle") || "").trim() || undefined
     };
 
@@ -45,10 +50,9 @@ export function InviteCreateForm() {
       return;
     }
 
-    setLastCode(data.invitation.displayCode);
+    setLastCode(data.invitation.code);
     setMessage(`Приглашение создано: ${data.invitation.displayCode}`);
     event.currentTarget.reset();
-    window.location.reload();
   }
 
   return (
@@ -74,6 +78,17 @@ export function InviteCreateForm() {
           <input name="jobTitle" maxLength={80} />
         </label>
         <label className="auth-form__full">
+          Отдел
+          <select name="departmentId" defaultValue="">
+            <option value="">Без отдела</option>
+            {departments.map((dept) => (
+              <option key={dept.id} value={dept.id}>
+                {dept.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="auth-form__full">
           Роль при вступлении
           <select name="assignRole" defaultValue="COMPANY_EMPLOYEE">
             <option value="COMPANY_EMPLOYEE">Сотрудник</option>
@@ -86,9 +101,18 @@ export function InviteCreateForm() {
         </button>
       </form>
       {lastCode ? (
-        <p className="lesson-text">
-          Ссылка: <code>/invite/{lastCode.replace(/[^A-Z0-9]/g, "")}</code>
-        </p>
+        <div className="invite-result">
+          <p className="lesson-text">
+            Ссылка: <code>/invite/{lastCode}</code>
+          </p>
+          <button
+            className="course-button"
+            type="button"
+            onClick={() => navigator.clipboard?.writeText(`${window.location.origin}/invite/${lastCode}`)}
+          >
+            Скопировать ссылку
+          </button>
+        </div>
       ) : null}
       {message ? <p className="auth-message">{message}</p> : null}
       {error ? <p className="auth-message is-error">{error}</p> : null}

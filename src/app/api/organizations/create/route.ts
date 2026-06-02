@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { OrganizationLegalForm } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { organizationCreateSchema } from "@/lib/validators";
@@ -40,7 +41,10 @@ export async function POST(request: Request) {
       data: {
         name: parsed.data.name,
         slug,
+        legalForm: parsed.data.legalForm as OrganizationLegalForm,
         inn: parsed.data.inn,
+        ogrn: parsed.data.ogrn || null,
+        kpp: parsed.data.kpp || null,
         legalName: parsed.data.legalName,
         legalAddress: parsed.data.legalAddress,
         corporateEmail: parsed.data.corporateEmail,

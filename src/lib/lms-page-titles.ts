@@ -1,0 +1,34 @@
+export function lmsPageTitle(pathname: string): string {
+  if (pathname === "/dashboard" || pathname === "/pending") return "Мой прогресс";
+  if (pathname.startsWith("/learn")) return "Обучение";
+  if (pathname.startsWith("/lessons")) return "Урок";
+  if (pathname.startsWith("/knowledge")) return "База знаний";
+  if (pathname.startsWith("/marketplace")) return "Маркетплейс";
+  if (pathname.startsWith("/studio")) return "Студия курсов";
+  if (pathname.startsWith("/security")) return "Безопасность";
+  if (pathname.startsWith("/certificates")) return "Сертификат";
+  if (pathname.startsWith("/ai")) return "AI-модуль";
+  if (pathname.startsWith("/mobile")) return "Мобильная платформа";
+  if (pathname.startsWith("/support")) return "Помощь";
+  if (pathname.startsWith("/change-password")) return "Смена пароля";
+  if (pathname === "/company") return "Обзор компании";
+  if (pathname.startsWith("/company/employees")) return "Сотрудники";
+  if (pathname.startsWith("/company/departments")) return "Отделы";
+  if (pathname.startsWith("/company/courses")) return "Курсы компании";
+  if (pathname.startsWith("/company/programs")) return "Учебные программы";
+  if (pathname.startsWith("/company/knowledge")) return "База знаний";
+  if (pathname.startsWith("/company/onboarding")) return "Onboarding";
+  if (pathname.startsWith("/company/invitations")) return "Приглашения";
+  if (pathname.startsWith("/company/analytics")) return "Аналитика";
+  if (pathname.startsWith("/company/integrations")) return "Интеграции";
+  if (pathname.startsWith("/company/settings")) return "Настройки компании";
+  if (pathname.startsWith("/company")) return "Компания";
+  if (pathname.startsWith("/admin/platform")) return "Верификация";
+  if (pathname.startsWith("/admin/content")) return "Контент LMS";
+  if (pathname.startsWith("/admin/api")) return "API";
+  if (pathname.startsWith("/admin/moderation")) return "Модерация";
+  if (pathname.startsWith("/admin/marketplace")) return "Маркетплейс";
+  if (pathname.startsWith("/admin")) return "Админ LMS";
+  if (pathname.startsWith("/integration")) return "Интеграции";
+  return "Garpium LMS";
+}

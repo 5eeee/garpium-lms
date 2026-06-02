@@ -83,18 +83,26 @@ export function CourseAssignmentForm({
         </label>
       ) : null}
       {scope === "USER" ? (
-        <label className="auth-form__full">
-          Сотрудник
-          <select name="userId" required>
-            {employees.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        employees.length ? (
+          <label className="auth-form__full">
+            Сотрудник
+            <select name="userId" required>
+              {employees.map((e) => (
+                <option key={e.id} value={e.id}>
+                  {e.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          <p className="lesson-text">Нет активных сотрудников — пригласите коллег в разделе «Приглашения».</p>
+        )
       ) : null}
-      <button className="course-button is-primary" disabled={loading} type="submit">
+      <button
+        className="course-button is-primary"
+        disabled={loading || (scope === "USER" && !employees.length) || (scope === "DEPARTMENT" && !departments.length)}
+        type="submit"
+      >
         {loading ? "Назначаем..." : "Назначить курс"}
       </button>
       {message ? <p className="auth-message">{message}</p> : null}

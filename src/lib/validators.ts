@@ -10,8 +10,19 @@ export const registerSchema = z.object({
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export const organizationCreateSchema = z.object({
+  legalForm: z.enum(["SELF_EMPLOYED", "IP", "OOO", "AO", "PAO", "NKO", "GOVERNMENT"]),
   name: z.string().trim().min(2).max(80),
   inn: z.string().trim().min(10).max(12).regex(/^\d+$/, "ИНН — только цифры"),
+  ogrn: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
+  kpp: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
   legalName: z.string().trim().min(2).max(200),
   legalAddress: z.string().trim().min(5).max(300),
   corporateEmail: z.string().trim().email().max(80).transform((v) => v.toLowerCase()),
@@ -81,3 +92,18 @@ export const domainCreateSchema = z.object({
     .max(120)
     .regex(/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/, "Некорректный домен")
 });
+
+export const knowledgeCategoryCreateSchema = z.object({
+  name: z.string().trim().min(2).max(80)
+});
+
+export const knowledgeArticleCreateSchema = z.object({
+  title: z.string().trim().min(2).max(200),
+  content: z.string().trim().min(1).max(50000),
+  categoryId: z.string().cuid().optional(),
+  visibility: z.enum(["COMPANY", "DEPARTMENT", "MANAGERS", "ADMINS"]).default("COMPANY"),
+  departmentId: z.string().cuid().optional(),
+  published: z.boolean().default(true)
+});
+
+export const knowledgeArticleUpdateSchema = knowledgeArticleCreateSchema.partial();

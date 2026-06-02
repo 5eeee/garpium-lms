@@ -1,14 +1,8 @@
 import Link from "next/link";
-import type { Lesson as DbLesson, Module } from "@prisma/client";
 import { db } from "@/lib/db";
-import { lessons } from "@/lib/course-data";
 import { requireAdmin } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
-
-type DbLessonWithModule = DbLesson & {
-  module: Module;
-};
 
 export default async function AdminContentPage() {
   await requireAdmin();
@@ -17,50 +11,61 @@ export default async function AdminContentPage() {
     include: { module: { include: { course: true } } }
   });
 
-  const rows = dbLessons.length
-    ? dbLessons
-    : lessons.map((lesson) => ({
-        id: lesson.id,
-        title: lesson.title,
-        module: { title: lesson.module, course: { title: lesson.track.toUpperCase() } }
-      }));
+  const courses = await db.course.findMany({ orderBy: { order: "asc" } });
 
   return (
     <>
       <header className="course-top">
         <span className="course-kicker">CMS</span>
-        <h1 className="course-title">Контент курса</h1>
+        <h1 className="course-title">Контент</h1>
         <p className="course-lead">
-          {dbLessons.length} уроков в базе. Нажмите «Редактировать», чтобы изменить текст, задание и ответы.
+          Курсы и уроки создаются в базе. Статические HTML/CSS треки удалены — добавляйте программы через
+          админку или API.
         </p>
       </header>
 
       <section className="lesson-grid">
         <article className="lesson-card span-6">
-          <span className="card-label">База</span>
-          <h2>{dbLessons.length}</h2>
-          <p className="lesson-text">уроков синхронизировано</p>
+          <span className="card-label">Курсы в БД</span>
+          <h2>{courses.length}</h2>
+          {courses.length === 0 ? (
+            <p className="lesson-text">Пока нет курсов. Создайте запись Course в Prisma / будущем редакторе.</p>
+          ) : (
+            <ul className="lesson-list">
+              {courses.map((c) => (
+                <li key={c.id}>
+                  <strong>{c.title}</strong> ({c.slug})
+                </li>
+              ))}
+            </ul>
+          )}
         </article>
+
         <article className="lesson-card span-6">
-          <span className="card-label">Seed</span>
-          <h2>{lessons.length}</h2>
-          <p className="lesson-text">уроков в исходных данных</p>
+          <span className="card-label">Уроки</span>
+          <h2>{dbLessons.length}</h2>
+          <p className="lesson-text">Редактирование доступно для уроков в базе.</p>
         </article>
-      </section>
 
-      <section className="content-table">
-        {rows.map((lesson) => (
-          <div className="content-row" key={lesson.id}>
-            <span>{lesson.id}</span>
-            <strong>{lesson.title}</strong>
-            <Link href={`/admin/content/${lesson.id}`}>Редактировать</Link>
-          </div>
-        ))}
+        {dbLessons.length > 0 ? (
+          <article className="lesson-card span-12">
+            <div className="content-table">
+              {dbLessons.map((lesson) => (
+                <div className="content-row" key={lesson.id}>
+                  <span>{lesson.order}</span>
+                  <div>
+                    <strong>{lesson.title}</strong>
+                    <p className="lesson-text">
+                      {lesson.module.course.title} · {lesson.module.title}
+                    </p>
+                  </div>
+                  <Link href={`/admin/content/${lesson.id}`}>Редактировать</Link>
+                </div>
+              ))}
+            </div>
+          </article>
+        ) : null}
       </section>
-
-      <footer className="course-footer">
-        <Link className="course-button" href="/admin">← Админка</Link>
-      </footer>
     </>
   );
 }
